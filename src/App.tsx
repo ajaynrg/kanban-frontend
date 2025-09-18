@@ -1,7 +1,8 @@
 import './App.css'
+import LayoutPage from './pages/LayoutPage'
 
 function App() {
-  return <div>Hello World</div>
+  return <LayoutPage />
 }
 
 export default App
