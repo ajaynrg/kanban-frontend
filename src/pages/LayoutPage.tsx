@@ -1,16 +1,7 @@
-import AppSidebar from "../components/AppSidebar";
-import { SidebarProvider, SidebarTrigger } from "../components/ui/sidebar";
+import { Outlet } from "react-router";
 
-function LayoutPage({ children }: { children: React.ReactNode }) {
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <main>
-        <SidebarTrigger />
-        {children}
-      </main>
-    </SidebarProvider>
-  )
+function LayoutPage() {
+  return <Outlet />;
 }
 
 export default LayoutPage;
