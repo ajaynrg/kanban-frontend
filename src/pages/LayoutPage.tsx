@@ -1,7 +1,9 @@
 import { Outlet } from "react-router";
 
 function LayoutPage() {
-  return <Outlet />;
+  return <div className="m-6">
+    <Outlet />
+  </div>;
 }
 
 export default LayoutPage;

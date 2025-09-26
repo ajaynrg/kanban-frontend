@@ -6,4 +6,9 @@ async function fetchAllBoards() {
     return response.data;
 }
 
-export { fetchAllBoards };
+async function createBoard(boardData: { title: string }) {
+    const response = await apiClient.post(API_CONFIG.ENDPOINTS.BOARDS, boardData);
+    return response.data;
+}
+
+export { fetchAllBoards, createBoard };
