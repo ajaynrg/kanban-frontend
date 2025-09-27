@@ -3,6 +3,17 @@ import { fetchAllBoards } from "../apis/boardApi";
 import type { Board } from "../interfaces/board.model";
 import { useNavigate } from "react-router";
 import CreateBoardDialog from "../components/dialogs/CreateBoardDialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu"
+import { Button } from "../components/ui/button";
+
 
 function BoardPage(){
     const {isPending, data, error, isError} = useQuery({
@@ -36,19 +47,57 @@ function BoardPage(){
             onSave={(res)=>{console.log('res recieved from dialog is -> ',res)}}
           />
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-4">
-          {data.map((board: Board) => (
-            <div 
-              key={board._id} 
-              className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6 cursor-pointer border border-gray-200 hover:border-blue-300"
-              onClick={() => {navigateToBoard(board._id || '')}}
-            >
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">{board.title}</h3>
-              <div className="text-sm text-gray-500">
-                Click to open board
+        <div className="bg-white rounded-lg shadow p-6">
+          {
+            data && data.length > 0 ? (
+              <div>
+                <Table className="justify-between w-full">
+                  <TableHeader>
+                    <TableRow className="bg-gray-100">
+                      <TableHead className="py-2 px-4">Index</TableHead>
+                      <TableHead className="py-2 px-4">Title</TableHead>
+                      <TableHead className="py-2 px-4">Created By</TableHead>
+                      <TableHead className="py-2 px-4">Created at</TableHead>
+                      <TableHead className="py-2 px-4">Last Updated</TableHead>
+                      <TableHead className="py-2 px-4">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {
+                      data.map((board: Board, idx: number) => (
+                        <TableRow
+                          key={board._id}
+                          onClick={() => navigateToBoard(board._id || '')}
+                          className="hover:bg-gray-50 transition"
+                              >
+                          <TableCell className="py-2 px-4">{idx + 1}</TableCell>
+                          <TableCell className="py-2 px-4 font-medium">{board.title}</TableCell>
+                          <TableCell className="py-2 px-4">{board.createdBy}</TableCell>
+                          <TableCell className="py-2 px-4">{board.createdAt ? new Date(board.createdAt).toLocaleString() : ''}</TableCell>
+                          <TableCell className="py-2 px-4">{board.lastUpdated ? new Date(board.lastUpdated).toLocaleString() : ''}</TableCell>
+                          <TableCell className="py-2 px-4">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger>
+                                <Button variant="ghost" className="cursor-pointer" size="icon">•••</Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>Edit</DropdownMenuItem>
+                                <DropdownMenuItem>Delete</DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    }
+                  </TableBody>
+                </Table>
               </div>
-            </div>
-          ))}
+            ) : (
+              <div className="text-gray-500 text-center py-8">No boards found</div>
+            )
+          }
         </div>
       </div>
     )

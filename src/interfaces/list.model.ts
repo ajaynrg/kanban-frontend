@@ -5,4 +5,8 @@ export interface List{
     title: string;
     boardId: string;
     cards?: Card[];
+    description: string;
+    createdAt?: Date;
+    lastUpdated?:Date;
+    createdBy?: string;
 }

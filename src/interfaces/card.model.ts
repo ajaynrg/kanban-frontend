@@ -7,4 +7,7 @@ export interface Card {
     position?: number;
     dueDate?: Date;
     labels?: string[];
+    createdAt?: Date;
+    lastUpdated?:Date;
+    createdBy?: string;
 }
