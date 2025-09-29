@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchAllBoards } from "../apis/boardApi";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteBoard, fetchAllBoards } from "../apis/boardApi";
 import type { Board } from "../interfaces/board.model";
 import { useNavigate } from "react-router";
 import CreateBoardDialog from "../components/dialogs/CreateBoardDialog";
@@ -20,14 +20,33 @@ function BoardPage(){
         queryKey:['boards'],
         queryFn:fetchAllBoards,
     });
+    const deleteBoardMutation = useMutation({
+      mutationFn: deleteBoard,
+    });
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const navigateToBoard = (boardId: string) => {
       if (!boardId){
         console.error("Board ID is undefined or null");
         return;
       };
+      console.log("Navigating to board with ID:", boardId);
       navigate(`/dashboard/${boardId}`);
+    }
+
+    const handleDeleteBoard = (boardId: string, event: React.MouseEvent) => {
+      event.stopPropagation();
+      deleteBoardMutation.mutate(boardId, {
+        onSuccess: () => {
+          // Invalidate and refetch
+          queryClient.invalidateQueries({ queryKey: ['boards'] });
+          console.log("Board deleted successfully");
+        },
+        onError: (error) => {
+          console.error("Error deleting board:", error);
+        }
+      });
     }
 
     if (isPending) {
@@ -40,7 +59,7 @@ function BoardPage(){
 
     // We can assume by this point that `isSuccess === true`
     return (
-      <div>
+      <div className="container mx-auto p-4 h-screen">
         <div className="flex gap-x-10 items-center mb-4">
           <h1 className="text-2xl font-bold">Boards</h1>
           <CreateBoardDialog
@@ -56,6 +75,7 @@ function BoardPage(){
                     <TableRow className="bg-gray-100">
                       <TableHead className="py-2 px-4">Index</TableHead>
                       <TableHead className="py-2 px-4">Title</TableHead>
+                      <TableHead className="py-2 px-4">Description</TableHead>
                       <TableHead className="py-2 px-4">Created By</TableHead>
                       <TableHead className="py-2 px-4">Created at</TableHead>
                       <TableHead className="py-2 px-4">Last Updated</TableHead>
@@ -72,9 +92,10 @@ function BoardPage(){
                               >
                           <TableCell className="py-2 px-4">{idx + 1}</TableCell>
                           <TableCell className="py-2 px-4 font-medium">{board.title}</TableCell>
+                          <TableCell className="py-2 px-4">{board.description}</TableCell>
                           <TableCell className="py-2 px-4">{board.createdBy}</TableCell>
-                          <TableCell className="py-2 px-4">{board.createdAt ? new Date(board.createdAt).toLocaleString() : ''}</TableCell>
-                          <TableCell className="py-2 px-4">{board.lastUpdated ? new Date(board.lastUpdated).toLocaleString() : ''}</TableCell>
+                          <TableCell className="py-2 px-4">{board.createdAt ? new Date(board.createdAt).toDateString() : ''}</TableCell>
+                          <TableCell className="py-2 px-4">{board.lastUpdated ? new Date(board.lastUpdated).toDateString() : ''}</TableCell>
                           <TableCell className="py-2 px-4">
                             <DropdownMenu>
                               <DropdownMenuTrigger>
@@ -84,7 +105,9 @@ function BoardPage(){
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem>Edit</DropdownMenuItem>
-                                <DropdownMenuItem>Delete</DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={(event) => handleDeleteBoard(board._id || '', event)}
+                                >Delete</DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </TableCell>

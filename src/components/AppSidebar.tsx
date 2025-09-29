@@ -49,7 +49,7 @@ function AppSidebar({ children }: { children: React.ReactNode }) {
         </SidebarFooter>
         </Sidebar>
         <SidebarTrigger className="cursor-pointer"/>
-        <div>
+        <div className="flex-1 w-full h-full">
             {children}
         </div>
     </SidebarProvider>

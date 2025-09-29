@@ -18,10 +18,11 @@ type CreateDialogProps = {
 }
 
 type BoardFormInputs = {
-    title: string
+    title: string,
+    description?: string,
 }
 
-function CreateBoardDialog({data, onSave}:CreateDialogProps) {
+function CreateBoardDialog({ onSave }: CreateDialogProps) {
 
     const [open, setOpen] = useState(false)
     
@@ -80,6 +81,18 @@ function CreateBoardDialog({data, onSave}:CreateDialogProps) {
                     />
                     {errors.title && (
                         <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+                    )}
+                    <label htmlFor="description" className="block text-sm font-medium mb-2 mt-4">
+                        Description
+                    </label>
+                    <textarea
+                        id="description"
+                        {...register("description")}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter board description (optional)"
+                    />
+                    {errors.description && (
+                        <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
                     )}
                 </div>
             </div>
