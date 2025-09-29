@@ -16,6 +16,7 @@ import { Button } from "../components/ui/button";
 import { useState } from "react";
 import { Input } from "../components/ui/input";
 import { toast } from "sonner";
+import YesNoDialog from "../components/dialogs/YesNoDialog";
 
 
 function BoardPage(){
@@ -51,8 +52,7 @@ function BoardPage(){
       navigate(`/dashboard/${boardId}`);
     }
 
-    const handleDeleteBoard = (boardId: string, event: React.MouseEvent) => {
-      event.stopPropagation();
+    const handleDeleteBoard = (boardId: string) => {
       deleteBoardMutation.mutate(boardId, {
         onSuccess: () => {
           // Invalidate and refetch
@@ -214,13 +214,21 @@ function BoardPage(){
                               >
                                 Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={(event) =>
-                                  handleDeleteBoard(board._id || "", event)
-                                }
+                              <YesNoDialog
+                                onYes={() => handleDeleteBoard(board._id || "")}
+                                onNo={() => {}}
+                                variant="destructive"
+                                title="Delete Board"
+                                description="Are you sure you want to delete this board?"
                               >
-                                Delete
-                              </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onSelect={(event) => {
+                                    event.preventDefault();
+                                  }}
+                                >
+                                  Delete
+                                </DropdownMenuItem>
+                              </YesNoDialog>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         )}
