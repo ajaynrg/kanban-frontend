@@ -15,6 +15,7 @@ import {
 import { Button } from "../components/ui/button";
 import { useState } from "react";
 import { Input } from "../components/ui/input";
+import { toast } from "sonner";
 
 
 function BoardPage(){
@@ -57,8 +58,10 @@ function BoardPage(){
           // Invalidate and refetch
           queryClient.invalidateQueries({ queryKey: ['boards'] });
           console.log("Board deleted successfully");
+          toast.success("Board deleted successfully", { duration: 2000, position: 'top-right' });
         },
         onError: (error) => {
+          toast.error("Error deleting board", { duration: 2000, position: 'top-right' });
           console.error("Error deleting board:", error);
         }
       });
@@ -67,6 +70,7 @@ function BoardPage(){
     const onEditSave = (id: string) => {
       console.log("Saving edited board:", editBoard);
       if (!editBoard || !editBoard.title) {
+        toast.error("Title is required", { duration: 2000, position: 'top-right' });
         console.error("Invalid board data");
         return;
       }
@@ -74,8 +78,10 @@ function BoardPage(){
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['boards'] });
           console.log("Board updated successfully");
+          toast.success("Board updated successfully", { duration: 2000, position: 'top-right' });
         },
         onError: (error) => {
+          toast.error("Error updating board", { duration: 2000, position: 'top-right' });
           console.error("Error updating board:", error);
         }
       });
@@ -123,12 +129,15 @@ function BoardPage(){
                       <TableCell className="py-2 px-4">{idx + 1}</TableCell>
                       {edit ? (
                         <>
-                          <TableCell className="py-2 px-4">
+                            <TableCell className="py-2 px-4">
                             <Input
                               value={editBoard?.title || ''}
                               onChange={(e) => setEditBoard(prev => prev ? { ...prev, title: e.target.value } : { title: e.target.value })}
+                              className={!editBoard?.title ? 'border-red-500 focus-visible:ring-red-500' : ''}
+                              placeholder="Board title"
                             />
-                          </TableCell>
+                            {/* {!editBoard?.title && <p className="text-red-500 text-sm">Title is required</p>} */}
+                            </TableCell>
                           <TableCell className="py-2 px-4">
                             <Input
                               value={editBoard?.description || ''}

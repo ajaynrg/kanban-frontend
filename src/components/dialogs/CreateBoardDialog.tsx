@@ -11,6 +11,7 @@ import { useForm, type SubmitHandler } from "react-hook-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createBoard } from "../../apis/boardApi";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type CreateDialogProps = {
     data?:object,
@@ -40,9 +41,11 @@ function CreateBoardDialog({ onSave }: CreateDialogProps) {
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['boards'] });
             console.log("Board created successfully:", data);
+            toast.success("Board created successfully", { duration: 2000, position: 'top-right' });
             setOpen(false);
         },
         onError: (error) => {
+            toast.error("Error creating board", { duration: 2000, position: 'top-right' });
             console.error("Error creating board:", error);
         },
     });

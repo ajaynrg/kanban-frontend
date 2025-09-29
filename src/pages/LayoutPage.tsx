@@ -5,5 +5,4 @@ function LayoutPage() {
     <Outlet />
   </div>;
 }
-
 export default LayoutPage;
