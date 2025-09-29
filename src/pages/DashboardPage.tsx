@@ -1,21 +1,28 @@
-import { useParams } from "react-router";
+import { useParams, useLocation } from "react-router";
+import CreateListDialog from "../components/dialogs/CreateListDialog";
 // import { IoMdArrowBack } from "react-icons/io";
 
 function DashboardPage() {
     const { id } = useParams();
-    console.log("Dashboard ID:", id);
+    const location = useLocation();
+    const {title, description} = location.state || {};
     // const navigate = useNavigate();
-
-    return ( 
-        <div className="">
-            <h1 className="flex items-center gap-2 text-2xl font-bold">
-                {/* <IoMdArrowBack 
-                    onClick={() => navigate(-1)}
-                    className="text-xl cursor-pointer hover:text-gray-600 transition-colors" 
-                /> */}
-                Dashboard
-            </h1>
-        </div> 
+    console.log("DashboardPage params:", { id });
+    return (
+        <div className="container mx-auto p-4 h-screen">
+            <div className="flex gap-x-10 items-center mb-4">
+            <div>
+                <h1 className="text-2xl font-bold">{title}</h1>
+                <p className="text-muted-foreground">{description}</p>
+            </div>
+            <CreateListDialog
+                onSave={(res) => {
+                    console.log("res received from dialog is -> ", res);
+                }}
+                boardId={id as string}  // id will always be present here
+            />
+            </div>
+        </div>
     );
 }
 

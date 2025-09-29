@@ -43,13 +43,20 @@ function BoardPage(){
       return <span>Error: {error.message}</span>
     }
 
-    const navigateToBoard = (boardId: string) => {
-      if (!boardId){
+    const navigateToBoard = (board: Board) => {
+      if (!board._id){
         console.error("Board ID is undefined or null");
         return;
       };
-      console.log("Navigating to board with ID:", boardId);
-      navigate(`/dashboard/${boardId}`);
+      console.log("Navigating to board with ID:", board._id);
+      navigate(`/dashboard/${board._id}`, { 
+        state: { 
+          title: board.title, 
+          description: board.description,
+          createdBy: board.createdBy,
+          createdAt: board.createdAt 
+        } 
+      });
     }
 
     const handleDeleteBoard = (boardId: string) => {
@@ -201,7 +208,7 @@ function BoardPage(){
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
-                                onClick={() => navigateToBoard(board._id || "")}
+                                onClick={() => navigateToBoard(board || "")}
                               >
                                 View
                               </DropdownMenuItem>
