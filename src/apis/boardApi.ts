@@ -16,4 +16,9 @@ async function deleteBoard(boardId: string) {
     return response.data;
 }
 
-export { fetchAllBoards, createBoard, deleteBoard };
+async function updateBoard(boardId: string, boardData: { title: string, description?: string }) {
+    const response = await apiClient.put(`${API_CONFIG.ENDPOINTS.BOARDS}/${boardId}`, boardData);
+    return response.data;
+}
+
+export { fetchAllBoards, createBoard, deleteBoard, updateBoard };
