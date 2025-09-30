@@ -4,7 +4,7 @@ import { SidebarHeader, SidebarContent, SidebarGroup, SidebarFooter, Sidebar, Si
 
 function AppSidebar({ children }: { children: React.ReactNode }) {
     const navigate = useNavigate();
-    const btns = ['Home', 'Boards', 'Teams', 'Calendar'];
+    const btns = ['Boards', 'Teams', 'Calendar'];
 
     return (
    <SidebarProvider>

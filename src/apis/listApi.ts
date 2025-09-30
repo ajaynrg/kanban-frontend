@@ -1,8 +1,8 @@
 import { apiClient } from '../config/apiClient';
 import { API_CONFIG } from '../config/api';
 
-async function fetchAllLists() {
-    const response = await apiClient.get(API_CONFIG.ENDPOINTS.LISTS);
+async function fetchListsByBoardId(boardId: string) {
+    const response = await apiClient.get(`${API_CONFIG.ENDPOINTS.LISTS}?boardId=${boardId}`);
     return response.data;
 }
 
@@ -21,4 +21,4 @@ async function updateList(listId: string, listData: { title: string, description
     return response.data;
 }
 
-export { fetchAllLists, createList, deleteList, updateList };
+export { fetchListsByBoardId, createList, deleteList, updateList };

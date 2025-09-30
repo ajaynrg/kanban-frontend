@@ -3,7 +3,7 @@ import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, 
 type DialogProps={
     children: React.ReactNode;
     onYes: ()=>void;
-    onNo: ()=>void;
+    onNo?: ()=>void;
     title: string;
     description?: string;
     variant?: "default" | "destructive";
@@ -24,8 +24,8 @@ function YesNoDialog({children, onYes, onNo, title, description, variant}: Dialo
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onNo} className="cursor-pointer">Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={onYes} className={`cursor-pointer ${variantClass}`}>Continue</AlertDialogAction>
+          <AlertDialogCancel onClick={onNo} className="cursor-pointer">Cancel</AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

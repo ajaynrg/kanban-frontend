@@ -49,12 +49,11 @@ function BoardPage(){
         return;
       };
       console.log("Navigating to board with ID:", board._id);
-      navigate(`/dashboard/${board._id}`, { 
+      navigate(`/lists/${board._id}`, { 
         state: { 
           title: board.title, 
           description: board.description,
-          createdBy: board.createdBy,
-          createdAt: board.createdAt 
+          lists: board.lists,
         } 
       });
     }
