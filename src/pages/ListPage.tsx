@@ -30,7 +30,7 @@ function ListPage() {
     });
 
     // const editListMutation = useMutation({
-    //     mutationFn: (data: { listId: string, listData: { title: string, description?: string } }) => {return updateList(data.listId, data.listData);},
+    //     mutationFn: (data: List) => {return updateList(data);},
     //     onSuccess: () => { invalidateLists(); }
     // });
 
