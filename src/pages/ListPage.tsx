@@ -1,7 +1,7 @@
 import { useLocation, useParams } from "react-router";
 import CreateListDialog from "../components/dialogs/CreateListDialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteList, fetchListsByBoardId } from "../apis/listApi";
+import { deleteList, fetchListsByBoardId, updateList } from "../apis/listApi";
 import type { List } from "../interfaces/list.model";
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 // import { MdModeEdit } from "react-icons/md";
@@ -33,10 +33,10 @@ function ListPage() {
         }
     });
 
-    // const editListMutation = useMutation({
-    //     mutationFn: (data: List) => {return updateList(data);},
-    //     onSuccess: () => { invalidateLists(); }
-    // });
+    const editListMutation = useMutation({
+        mutationFn: (data: List) => {return updateList(data);},
+        onSuccess: () => { invalidateLists(); }
+    });
 
     const invalidateLists = () => {
         queryClient.invalidateQueries({ queryKey: ['lists', id] });
@@ -70,15 +70,33 @@ function ListPage() {
                     <Card key={list._id} className="min-w-[300px]">
                         <CardHeader className="border-b">
                             <CardTitle>
-                                {editList && editList._id === list._id ? <Input className="ml-2" value={editList.title} /> : list.title}
+                                {
+                                    editList && editList._id === list._id ? 
+                                    <Input 
+                                        className={`ml-2 ${editList.title.trim() === "" ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                                        value={editList.title} onChange={(e) => setEditList({ ...editList, title: e.target.value })} 
+                                    /> 
+                                    : list.title
+                                }
                             </CardTitle>
                             <CardDescription>
-                                {editList && editList._id === list._id ? <Input className="ml-2" value={editList.description} /> : list.description}
+                                {
+                                    editList && editList._id === list._id ? 
+                                    <Input className="ml-2" value={editList.description} onChange={(e) => setEditList({ ...editList, description: e.target.value })} />
+                                    : list.description
+                                }
                             </CardDescription>
                             {(editList && editList._id === list._id) && (
                                 <div className="ml-2 mt-2 flex gap-x-2 justify-end">
                                     <Button variant="outline" className="cursor-pointer" onClick={() => setEditList(null)}>Cancel</Button>
-                                    <Button className="mr-2 cursor-pointer" onClick={() => setEditList(null)}>Save</Button>
+                                    <Button className="mr-2 cursor-pointer" onClick={() =>{
+                                        if(editList.title.trim() === ""){
+                                            toast.error("Title cannot be empty", {duration: 2000, position: 'top-right'});
+                                            return;
+                                        }
+                                        editListMutation.mutate(editList);
+                                        setEditList(null);
+                                    }}>Save</Button>
                                 </div>
                             )}
                             {
