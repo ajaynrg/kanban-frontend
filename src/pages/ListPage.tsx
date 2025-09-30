@@ -5,16 +5,20 @@ import { deleteList, fetchListsByBoardId } from "../apis/listApi";
 import type { List } from "../interfaces/list.model";
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 // import { MdModeEdit } from "react-icons/md";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdModeEdit } from "react-icons/md";
 import YesNoDialog from "../components/dialogs/YesNoDialog";
 import { toast } from "sonner";
+import { useState } from "react";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
 
 function ListPage() {
     const { id } = useParams();
     const location = useLocation();
     const { title, description } = location.state || { title: 'Board', description: '' };
     const queryClient = useQueryClient();
-
+    // const [edit, setEdit] = useState<boolean>(false);
+    const [editList, setEditList] = useState<List | null>(null);
     
     const queryList = useQuery({
         queryKey: ['lists', id],
@@ -64,27 +68,43 @@ function ListPage() {
                         <p>No lists found. Create one!</p>
                     ) : (queryList.data?.map((list: List) => (
                     <Card key={list._id} className="min-w-[300px]">
-                        <CardHeader>
-                            <CardTitle className="font-bold">{list.title}</CardTitle>
-                            <CardDescription className="text-muted-foreground">{list.description}</CardDescription>
-                            <CardAction className="flex gap-x-3">
-                                {/* <div>
-                                    <button onClick={() => editListMutation.mutate({ listId: list._id as string, listData: { title: list.title, description: list.description } })}><MdModeEdit className="cursor-pointer text-blue-500" /></button>
-                                </div> */}
-                                <div>
-                                    <YesNoDialog
-                                        title="Delete List"
-                                        description={`Are you sure you want to delete the list "${list.title}"? This action cannot be undone.`}
-                                        onYes={() => deleteListMutation.mutate(list._id as string)}
-                                        onNo={() => {}}
-                                        variant="destructive"
-                                    >
-                                        <button>
-                                            <MdDelete className="cursor-pointer text-red-500" />
-                                        </button>
-                                    </YesNoDialog>
+                        <CardHeader className="border-b">
+                            <CardTitle>
+                                {editList && editList._id === list._id ? <Input className="ml-2" value={editList.title} /> : list.title}
+                            </CardTitle>
+                            <CardDescription>
+                                {editList && editList._id === list._id ? <Input className="ml-2" value={editList.description} /> : list.description}
+                            </CardDescription>
+                            {(editList && editList._id === list._id) && (
+                                <div className="ml-2 mt-2 flex gap-x-2 justify-end">
+                                    <Button variant="outline" className="cursor-pointer" onClick={() => setEditList(null)}>Cancel</Button>
+                                    <Button className="mr-2 cursor-pointer" onClick={() => setEditList(null)}>Save</Button>
                                 </div>
-                            </CardAction>
+                            )}
+                            {
+                                (!editList || editList._id !== list._id) && (
+                                    <CardAction className="flex gap-x-3">
+                                        <div>
+                                            <button onClick={() => setEditList(list)}>
+                                                <MdModeEdit className="cursor-pointer text-blue-500" />
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <YesNoDialog
+                                                title="Delete List"
+                                                description={`Are you sure you want to delete the list "${list.title}"? This action cannot be undone.`}
+                                                onYes={() => deleteListMutation.mutate(list._id as string)}
+                                                onNo={() => {}}
+                                                variant="destructive"
+                                            >
+                                                <button>
+                                                    <MdDelete className="cursor-pointer text-red-500" />
+                                                </button>
+                                            </YesNoDialog>
+                                        </div>
+                                    </CardAction>
+                                )
+                            }
                         </CardHeader>
                     </Card>
                 )))

@@ -24,8 +24,8 @@ function YesNoDialog({children, onYes, onNo, title, description, variant}: Dialo
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogAction onClick={onYes} className={`cursor-pointer ${variantClass}`}>Continue</AlertDialogAction>
           <AlertDialogCancel onClick={onNo} className="cursor-pointer">Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={onYes} className={`cursor-pointer ${variantClass}`}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
