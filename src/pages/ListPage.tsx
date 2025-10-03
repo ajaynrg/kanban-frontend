@@ -130,7 +130,7 @@ function ListPage() {
                             <CreateCardDialog
                                 onSave={(res) => {
                                     console.log("res received from dialog is -> ", res);
-                                    invalidateLists(id as string);
+                                    invalidateLists(list._id as string);
                                 }}
                                 listId={list._id as string}  // id will always be present here
                             />
