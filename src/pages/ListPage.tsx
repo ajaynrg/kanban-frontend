@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import CreateCardDialog from "../components/dialogs/CreateCardDialog";
+import CardComponent from "../components/CardComponent";
 
 function ListPage() {
     const { id } = useParams();
@@ -29,17 +30,17 @@ function ListPage() {
     const deleteListMutation = useMutation({
         mutationFn: (listId: string) => { return deleteList(listId); },
         onSuccess: () => {
-            invalidateLists();
+            invalidateLists(id as string);
             toast.success("List deleted successfully", { duration: 2000, position: 'top-right' });
         }
     });
 
     const editListMutation = useMutation({
         mutationFn: (data: IList) => {return updateList(data);},
-        onSuccess: () => { invalidateLists(); }
+        onSuccess: () => { invalidateLists(id as string); }
     });
 
-    const invalidateLists = () => {
+    const invalidateLists = (id:string) => {
         queryClient.invalidateQueries({ queryKey: ['lists', id] });
     }
     
@@ -54,7 +55,7 @@ function ListPage() {
                 <CreateListDialog
                     onSave={(res) => {
                         console.log("res received from dialog is -> ", res);
-                        invalidateLists();
+                        invalidateLists(id as string);
                     }}
                     boardId={id as string}  // id will always be present here
                 />
@@ -129,11 +130,15 @@ function ListPage() {
                             <CreateCardDialog
                                 onSave={(res) => {
                                     console.log("res received from dialog is -> ", res);
-                                    invalidateLists();
+                                    invalidateLists(id as string);
                                 }}
-                                listId={id as string}  // id will always be present here
+                                listId={list._id as string}  // id will always be present here
                             />
-                            {/* Render cards here */}
+                            {
+                                list.cards && list.cards.length > 0 ? list.cards.map((card) => (
+                                    <CardComponent key={card._id} cardData={card} />
+                                )) : <p className="text-sm text-muted-foreground">No cards in this list. Add one!</p>
+                            }
                         </CardContent>
                     </Card>
                 )))

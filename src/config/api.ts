@@ -4,6 +4,7 @@ export const API_CONFIG = {
   ENDPOINTS: {
     BOARDS: '/api/boards',
     LISTS: '/api/lists',
+    CARDS: '/api/cards',
     // Add more endpoints as needed
   },
   TIMEOUT: 10000, // 10 seconds

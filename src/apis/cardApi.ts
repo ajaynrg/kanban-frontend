@@ -3,7 +3,7 @@ import { API_CONFIG } from '../config/api';
 import type { ICard } from '../interfaces/card.model';
 
 const createCard = async (data: ICard) => {
-    const response = await apiClient.post(`${API_CONFIG.BASE_URL}/cards`, data);
+    const response = await apiClient.post(`${API_CONFIG.ENDPOINTS.CARDS}/${data.listId}`, data);
     return response.data;
 };
 

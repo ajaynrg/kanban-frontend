@@ -12,6 +12,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { createCard } from "../../apis/cardApi";
+import { Input } from "../ui/input";
 
 type CreateListProps = {
     listId:string,
@@ -21,6 +22,9 @@ type CreateListProps = {
 type CardFormInputs = {
     title: string,
     description?: string,
+    labels?: string[],
+    dueDate?: Date,
+    assignee?: string,
 }
 
 function CreateCardDialog({listId, onSave }: CreateListProps) {
@@ -96,6 +100,34 @@ function CreateCardDialog({listId, onSave }: CreateListProps) {
                     />
                     {errors.description && (
                         <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                    )}
+                    <label htmlFor="labels" className="block text-sm font-medium mb-2 mt-4">
+                        Labels (comma separated)
+                    </label>
+                    <input
+                        id="labels"
+                        type="text"
+                        {...register("labels", { setValueAs: v => v.split(",").map((label: string) => label.trim()).filter((label:string) => label !== "") })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g. bug, feature, urgent"
+                    />
+                    {errors.labels && (
+                        <p className="text-red-500 text-sm mt-1">{errors.labels.message}</p>
+                    )}
+                    <label htmlFor="dueDate" className="block text-sm font-medium mb-2 mt-4">
+                        Due Date
+                    </label>
+                    <Input
+                        id="dueDate"
+                        type="date"
+                        min={new Date().toISOString().split("T")[0]} // Prevent selecting past dates
+                        {...register("dueDate", {
+                            setValueAs: v => v ? new Date(v) : undefined
+                        })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    {errors.dueDate && (
+                        <p className="text-red-500 text-sm mt-1">{errors.dueDate.message}</p>
                     )}
                 </div>
             </div>
