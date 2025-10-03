@@ -2,8 +2,8 @@ import { useLocation, useParams } from "react-router";
 import CreateListDialog from "../components/dialogs/CreateListDialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteList, fetchListsByBoardId, updateList } from "../apis/listApi";
-import type { List } from "../interfaces/list.model";
-import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import type { IList } from "../interfaces/list.model";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 // import { MdModeEdit } from "react-icons/md";
 import { MdDelete, MdModeEdit } from "react-icons/md";
 import YesNoDialog from "../components/dialogs/YesNoDialog";
@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
+import CreateCardDialog from "../components/dialogs/CreateCardDialog";
 
 function ListPage() {
     const { id } = useParams();
@@ -18,8 +19,8 @@ function ListPage() {
     const { title, description } = location.state || { title: 'Board', description: '' };
     const queryClient = useQueryClient();
     // const [edit, setEdit] = useState<boolean>(false);
-    const [editList, setEditList] = useState<List | null>(null);
-    
+    const [editList, setEditList] = useState<IList | null>(null);
+
     const queryList = useQuery({
         queryKey: ['lists', id],
         queryFn: () => fetchListsByBoardId(id as string)
@@ -34,7 +35,7 @@ function ListPage() {
     });
 
     const editListMutation = useMutation({
-        mutationFn: (data: List) => {return updateList(data);},
+        mutationFn: (data: IList) => {return updateList(data);},
         onSuccess: () => { invalidateLists(); }
     });
 
@@ -66,14 +67,14 @@ function ListPage() {
                         <p>Error loading lists.</p>
                     ) : queryList.data.length === 0 ? (
                         <p>No lists found. Create one!</p>
-                    ) : (queryList.data?.map((list: List) => (
+                    ) : (queryList.data?.map((list: IList) => (
                     <Card key={list._id} className="min-w-[300px]">
                         <CardHeader className="border-b">
                             <CardTitle>
                                 {
                                     editList && editList._id === list._id ? 
                                     <Input 
-                                        className={`ml-2 ${editList.title.trim() === "" ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                                        className={`${editList.title.trim() === "" ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                                         value={editList.title} onChange={(e) => setEditList({ ...editList, title: e.target.value })} 
                                     /> 
                                     : list.title
@@ -82,12 +83,12 @@ function ListPage() {
                             <CardDescription>
                                 {
                                     editList && editList._id === list._id ? 
-                                    <Input className="ml-2" value={editList.description} onChange={(e) => setEditList({ ...editList, description: e.target.value })} />
+                                    <Input value={editList.description} onChange={(e) => setEditList({ ...editList, description: e.target.value })} />
                                     : list.description
                                 }
                             </CardDescription>
                             {(editList && editList._id === list._id) && (
-                                <div className="ml-2 mt-2 flex gap-x-2 justify-end">
+                                <div className="flex justify-end gap-x-2 mt-1 -mr-2">
                                     <Button variant="outline" className="cursor-pointer" onClick={() => setEditList(null)}>Cancel</Button>
                                     <Button className="mr-2 cursor-pointer" onClick={() =>{
                                         if(editList.title.trim() === ""){
@@ -124,6 +125,16 @@ function ListPage() {
                                 )
                             }
                         </CardHeader>
+                        <CardContent className="max-h-[60vh] overflow-y-auto">
+                            <CreateCardDialog
+                                onSave={(res) => {
+                                    console.log("res received from dialog is -> ", res);
+                                    invalidateLists();
+                                }}
+                                listId={id as string}  // id will always be present here
+                            />
+                            {/* Render cards here */}
+                        </CardContent>
                     </Card>
                 )))
                 }

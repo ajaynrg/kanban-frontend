@@ -1,11 +1,11 @@
-import type { List } from "./list.model";
+import type { IList } from "./list.model";
 
-export interface Board{
+export interface IBoard{
     _id?: string;
     title: string;
     description?: string;
     createdAt?: Date;
     lastUpdated?:Date;
     createdBy?: string;
-    lists?: List[];
+    lists?: IList[];
 }

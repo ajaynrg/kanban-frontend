@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteBoard, fetchAllBoards, updateBoard } from "../apis/boardApi";
-import type { Board } from "../interfaces/board.model";
+import type { IBoard } from "../interfaces/board.model";
 import { useNavigate } from "react-router";
 import CreateBoardDialog from "../components/dialogs/CreateBoardDialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
@@ -43,7 +43,7 @@ function BoardPage(){
       return <span>Error: {error.message}</span>
     }
 
-    const navigateToBoard = (board: Board) => {
+    const navigateToBoard = (board: IBoard) => {
       if (!board._id){
         console.error("Board ID is undefined or null");
         return;
@@ -127,7 +127,7 @@ function BoardPage(){
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.map((board: Board, idx: number) => (
+                  {data.map((board: IBoard, idx: number) => (
                     <TableRow
                       key={board._id}
                       className="hover:bg-gray-50 transition"

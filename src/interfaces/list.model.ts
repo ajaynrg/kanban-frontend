@@ -1,10 +1,10 @@
-import type { Card } from "./card.model";
+import type { ICard } from "./card.model";
 
-export interface List{
+export interface IList{
     _id?: string;
     title: string;
     boardId: string;
-    cards?: Card[];
+    cards?: ICard[];
     description?: string;
     createdAt?: Date;
     lastUpdated?:Date;
