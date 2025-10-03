@@ -4,8 +4,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteList, fetchListsByBoardId, updateList } from "../apis/listApi";
 import type { IList } from "../interfaces/list.model";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-// import { MdModeEdit } from "react-icons/md";
-import { MdDelete, MdModeEdit } from "react-icons/md";
 import YesNoDialog from "../components/dialogs/YesNoDialog";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -13,6 +11,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import CreateCardDialog from "../components/dialogs/CreateCardDialog";
 import CardComponent from "../components/CardComponent";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
 
 function ListPage() {
     const { id } = useParams();
@@ -103,25 +102,39 @@ function ListPage() {
                             )}
                             {
                                 (!editList || editList._id !== list._id) && (
-                                    <CardAction className="flex gap-x-3">
-                                        <div>
-                                            <button onClick={() => setEditList(list)}>
-                                                <MdModeEdit className="cursor-pointer text-blue-500" />
-                                            </button>
-                                        </div>
-                                        <div>
-                                            <YesNoDialog
-                                                title="Delete List"
-                                                description={`Are you sure you want to delete the list "${list.title}"? This action cannot be undone.`}
-                                                onYes={() => deleteListMutation.mutate(list._id as string)}
-                                                onNo={() => {}}
-                                                variant="destructive"
-                                            >
-                                                <button>
-                                                    <MdDelete className="cursor-pointer text-red-500" />
+                                    <CardAction className="flex">
+                                         <DropdownMenu>
+                                            <DropdownMenuTrigger className="outline-none -mt-3">
+                                                <button
+                                                    className="cursor-pointer font-semibold outline-none"
+                                                >
+                                                    •••
                                                 </button>
-                                            </YesNoDialog>
-                                        </div>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem className="cursor-pointer" onClick={() => setEditList(list)}>
+                                                    Edit
+                                                </DropdownMenuItem>
+                                                <YesNoDialog
+                                                    title="Delete List"
+                                                    description={`Are you sure you want to delete the list "${list.title}"? This action cannot be undone.`}
+                                                    onYes={() => deleteListMutation.mutate(list._id as string)}
+                                                    onNo={() => {}}
+                                                    variant="destructive"
+                                                >
+                                                    <DropdownMenuItem 
+                                                        onSelect={(event) => {
+                                                            event.preventDefault();
+                                                        }}
+                                                        className="cursor-pointer text-red-600 hover:text-red-800 focus:text-red-800">
+                                                        Delete
+                                                    </DropdownMenuItem>
+                                                </YesNoDialog>
+                                                
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </CardAction>
                                 )
                             }
@@ -136,7 +149,11 @@ function ListPage() {
                             />
                             {
                                 list.cards && list.cards.length > 0 ? list.cards.map((card) => (
-                                    <CardComponent key={card._id} cardData={card} />
+                                    <CardComponent 
+                                        key={card._id} 
+                                        cardData={card} 
+                                        onDelete={() => invalidateLists(id as string)}
+                                    />
                                 )) : <p className="text-sm text-muted-foreground">No cards in this list. Add one!</p>
                             }
                         </CardContent>

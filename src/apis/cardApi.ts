@@ -7,5 +7,10 @@ const createCard = async (data: ICard) => {
     return response.data;
 };
 
-export { createCard };
+const deleteCard = async (cardId: string) => {
+    const response = await apiClient.delete(`${API_CONFIG.ENDPOINTS.CARDS}/${cardId}`);
+    return response.data;
+};
+
+export { createCard, deleteCard };
 
