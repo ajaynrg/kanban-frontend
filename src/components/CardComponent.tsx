@@ -1,7 +1,7 @@
 
 import type { ICard } from "../interfaces/card.model";
 import { Badge } from "./ui/badge";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { deleteCard } from "../apis/cardApi";
@@ -73,6 +73,13 @@ function CardComponent({cardData, onDelete}: ICardComponentProps) {
                 </div>
             )}
         </CardContent>
+        <CardFooter>
+            {cardData.dueDate && (
+                <div className="text-sm text-gray-500">
+                    Due: {new Date(cardData.dueDate).toLocaleDateString()}
+                </div>
+            )}
+        </CardFooter>
     </Card>
 }
 
