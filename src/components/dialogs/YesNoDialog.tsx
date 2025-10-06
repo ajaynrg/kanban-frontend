@@ -11,7 +11,8 @@ type DialogProps={
 
 function YesNoDialog({children, onYes, onNo, title, description, variant}: DialogProps) {
 
-    const variantClass = variant === "destructive" ? "bg-red-600 text-white hover:bg-red-700 focus:ring-red-300" : "";
+  const variantClass = variant === "destructive" ? "bg-red-600 text-white hover:bg-red-700 focus:ring-red-300" : "";
+    
 
   return (
     <AlertDialog>

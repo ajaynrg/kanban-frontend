@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { deleteCard } from "../apis/cardApi";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import YesNoDialog from "./dialogs/YesNoDialog";
+import { useDraggable } from "@dnd-kit/core";
 
 type ICardComponentProps = {
     cardData: ICard;
@@ -30,10 +31,23 @@ function CardComponent({cardData, onDelete}: ICardComponentProps) {
         deleteCardMutation.mutate(cardData._id as string);
     };
 
-    return <Card className="w-64 mt-2 cursor-pointer hover:shadow-lg transition-shadow">
+    const {attributes, listeners, setNodeRef, isDragging} = useDraggable({
+        id: cardData._id as string,
+        data: {
+            type: 'CARD',
+            card: cardData
+        }
+    });
+
+    return <Card className={`w-64 mt-2 cursor-pointer hover:shadow-lg transition-shadow ${isDragging ? 'opacity-50' : ''}`}
+        ref={setNodeRef}
+        {...attributes}
+        >
         <CardHeader>
-            <CardTitle className="font-semibold">{cardData.title}</CardTitle>
-            <CardDescription>{cardData.description}</CardDescription>
+            <div {...listeners} className="flex-1">
+                <CardTitle className="font-semibold">{cardData.title}</CardTitle>
+                <CardDescription>{cardData.description}</CardDescription>
+            </div>
             <CardAction className="flex justify-end">
                 <DropdownMenu>
                     <DropdownMenuTrigger className="outline-none -mt-3">
@@ -62,7 +76,7 @@ function CardComponent({cardData, onDelete}: ICardComponentProps) {
                 </DropdownMenu>
             </CardAction>
         </CardHeader>
-        <CardContent>
+        <CardContent {...listeners}>
             {cardData.labels && cardData.labels.length > 0 && (
                 <div className="flex flex-wrap gap-1 mb-2">
                     {cardData.labels.map((label, index) => (
@@ -73,7 +87,7 @@ function CardComponent({cardData, onDelete}: ICardComponentProps) {
                 </div>
             )}
         </CardContent>
-        <CardFooter>
+        <CardFooter {...listeners}>
             {cardData.dueDate && (
                 <div className="text-sm text-gray-500">
                     Due: {new Date(cardData.dueDate).toLocaleDateString()}

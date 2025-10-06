@@ -12,5 +12,16 @@ const deleteCard = async (cardId: string) => {
     return response.data;
 };
 
-export { createCard, deleteCard };
+const moveCard = async (cardId: string, newListId: string) => {
+    const response = await apiClient.put(`${API_CONFIG.ENDPOINTS.CARDS}/${cardId}/move/${newListId}`);
+    console.log("Move card response:", response.data);
+    return response.data;
+}
+
+const updateCard = async (card: ICard) => {
+    const response = await apiClient.put(`${API_CONFIG.ENDPOINTS.CARDS}/${card._id}`, card);
+    return response.data;
+};
+
+export { createCard, deleteCard, updateCard, moveCard };
 

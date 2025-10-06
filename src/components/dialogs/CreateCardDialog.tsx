@@ -29,8 +29,7 @@ type CardFormInputs = {
 
 function CreateCardDialog({listId, onSave }: CreateListProps) {
 
-    const [open, setOpen] = useState(false)
-    
+    const [open, setOpen] = useState(false);
     const {
         register,
         handleSubmit,
