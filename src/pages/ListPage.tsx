@@ -44,14 +44,7 @@ function ListPage() {
     });
 
     const moveCardMutation = useMutation({
-        mutationFn: ({ cardId, newListId }: { cardId: string, newListId: string }) => moveCard(cardId, newListId),
-        onSuccess: () => {
-            invalidateLists(id as string);
-            toast.success("Card moved successfully", { duration: 2000, position: 'top-right' });
-        },
-        onError: () => {
-            toast.error("Failed to move card", { duration: 2000, position: 'top-right' });
-        }
+        mutationFn: ({ cardId, newListId }: { cardId: string, newListId: string }) => moveCard(cardId, newListId)
     });
 
     const invalidateLists = (id:string) => {
@@ -77,9 +70,48 @@ function ListPage() {
         // If the card is being dropped in the same list, do nothing
         if (draggedCard.listId === targetListId) return;
 
-        // Update the card with the new list ID
+        // Optimistically update the UI immediately
+        const previousLists = queryList.data;
         const updatedCard = { ...draggedCard, listId: targetListId };
-        moveCardMutation.mutate({ cardId: updatedCard._id as string, newListId: targetListId });
+        
+        // Update the cache optimistically
+        queryClient.setQueryData(['lists', id], (oldLists: IList[]) => {
+            if (!oldLists) return oldLists;
+            
+            return oldLists.map(list => {
+                if (list._id === draggedCard.listId) {
+                    // Remove card from source list
+                    return {
+                        ...list,
+                        cards: list.cards?.filter(card => card._id !== draggedCard._id) || []
+                    };
+                } else if (list._id === targetListId) {
+                    // Add card to target list
+                    return {
+                        ...list,
+                        cards: [...(list.cards || []), updatedCard]
+                    };
+                }
+                return list;
+            });
+        });
+
+        // Make the API call
+        moveCardMutation.mutate(
+            { cardId: updatedCard._id as string, newListId: targetListId },
+            {
+                onError: () => {
+                    // Revert the optimistic update on error
+                    queryClient.setQueryData(['lists', id], previousLists);
+                    toast.error("Failed to move card", { duration: 2000, position: 'top-right' });
+                },
+                onSuccess: () => {
+                    // Refresh from server to ensure consistency
+                    invalidateLists(id as string);
+                    toast.success("Card moved successfully", { duration: 2000, position: 'top-right' });
+                }
+            }
+        );
     };
 
     // Component for making each list droppable
