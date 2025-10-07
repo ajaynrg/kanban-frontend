@@ -1,4 +1,4 @@
-import { useLocation, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import CreateListDialog from "../components/dialogs/CreateListDialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteList, fetchListsByBoardId, updateList } from "../apis/listApi";
@@ -15,10 +15,12 @@ import CreateCardDialog from "../components/dialogs/CreateCardDialog";
 import CardComponent from "../components/CardComponent";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
 import { DndContext, useDroppable, DragOverlay, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
+import { IoMdArrowBack } from "react-icons/io";
 
 function ListPage() {
     const { id } = useParams();
     const location = useLocation();
+    const navigate = useNavigate();
     const { title, description } = location.state || { title: 'Board', description: '' };
     const queryClient = useQueryClient();
     // const [edit, setEdit] = useState<boolean>(false);
@@ -131,7 +133,10 @@ function ListPage() {
             <div className="container mx-auto p-4 h-screen">
                 <div className="flex gap-x-10 items-center mb-4">
                     <div>
-                        <h1 className="text-2xl font-bold">{title}</h1>
+                        <div className="flex items-center gap-x-3 mb-1">
+                            <IoMdArrowBack size={24} className="cursor-pointer" onClick={() => navigate(-1)}/>
+                            <h1 className="text-2xl font-bold">{title}</h1>
+                        </div>
                         <p className="text-muted-foreground">{description}</p>
                     </div>
                     <CreateListDialog
@@ -195,7 +200,7 @@ function ListPage() {
                                                 </button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent>
-                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                <DropdownMenuLabel className="text-gray-500">Actions</DropdownMenuLabel>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuItem className="cursor-pointer" onClick={() => setEditList(list)}>
                                                     Edit

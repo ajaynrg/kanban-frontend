@@ -39,12 +39,12 @@ function CardComponent({cardData, onDelete}: ICardComponentProps) {
         }
     });
 
-    return <Card className={`w-64 mt-2 cursor-pointer hover:shadow-lg transition-shadow ${isDragging ? 'opacity-50' : ''}`}
+    return <Card className={`w-64 mt-2 hover:shadow-lg transition-shadow ${isDragging ? 'opacity-50' : ''}`}
         ref={setNodeRef}
         {...attributes}
         >
         <CardHeader>
-            <div {...listeners} className="flex-1">
+            <div {...listeners} className="flex-1 cursor-pointer">
                 <CardTitle className="font-semibold">{cardData.title}</CardTitle>
                 <CardDescription>{cardData.description}</CardDescription>
             </div>
@@ -54,7 +54,7 @@ function CardComponent({cardData, onDelete}: ICardComponentProps) {
                         <button className="cursor-pointer font-medium">•••</button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel className="text-gray-500">Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <YesNoDialog
                             title={"Confirm Deletion"}
